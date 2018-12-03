@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+#    Date: December 03, 2018
+#    From: Mark Mollere, mmollere@novetta.com
+# Subject: doctorzulu
+#      To: You
+#       _            _                         _
+#    __| | ___   ___| |_ ___  _ __   _____   _| |_   _
+#   / _` |/ _ \ / __| __/ _ \| '__| |_  / | | | | | | |
+#  | (_| | (_) | (__| || (_) | |     / /| |_| | | |_| |
+#   \__,_|\___/ \___|\__\___/|_|    /___|\__,_|_|\__,_|
+#
+# doctorzulu is a self-healing ddiagnostic utility that will restore a Linux
+# system from catastrophic failure.
+#
+# ..5...10...15...20...25...30...35...40...45...50...55...60...65...70...75...80
+
+LOG_FILE="/var/log/doctorzulu.log"
+PERMS_LIST_644="
+/etc/resolv.conf
+"
+VERSION="0.1"
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+show_version()
+{
+  echo "$(basename "$0") Version: $VERSION"
+}
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+check_file_permissions()
+{
+  for FILE in "$PERMS_LIST_644";do
+    ORIGINAL_PERM=$(stat -c "%a" $FILE)
+    if [ "$ORIGINAL_PERM" -ne "644" ];then
+      chmod 644 "$FILE"
+      umask 027
+      echo "date '+%Y/%M/%d %H:%m:%S' $FILE permissions changed from $ORIGINAL_PERM to 644" >>  $LOG_FILE
+    fi
+  done
+}
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TEMP=`getopt -o :lv --long version:: -n 'opt' -- "$@"`
+
+eval set -- "$TEMP"
+
+while true;do
+  case "$1" in
+    -v|--version) show_version;exit 1;;
+    --) shift;break;;
+  esac
+done
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+check_file_permissions
