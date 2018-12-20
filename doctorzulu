@@ -15,11 +15,14 @@
 #
 # ..5...10...15...20...25...30...35...40...45...50...55...60...65...70...75...80
 
+BACKUP_DIR="/gevol/doctorzulu"
 LOG_FILE="/var/log/doctorzulu.log"
 PERMS_LIST_644="
+REPO_FILE="ansible-server.repo"
+REPO_SERVER=$(grep baseurl "$REPO_FILE"|tail -n -1|awk -F \/\/ '{print $2}'|awk -F\/ '{print $1}')
 /etc/resolv.conf
 "
-VERSION="0.1"
+VERSION="0.2"
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 show_version()
@@ -39,6 +42,24 @@ check_file_permissions()
   done
 }
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+detect_newfusion_repo()
+{
+  if [ -f "$REPO_FILE" ];then
+    if [ ! $(grep -E "^baseurl=https://.*/newfusion" $REPO_FILE) ];then
+      if [ ! -d "$BACKUP_DIR" ];then
+        mkdir "$BACKUP_DIR"
+      fi
+    cp "$REPO_FILE" "$BACKUP_DIR/$REPO_FILE.$(date "+%Y.%m.%d-%H%M%S")"
+    echo >> "$REPO_FILE"
+    echo "[newfusion]" >> "$REPO_FILE"
+    echo "name=New Fusion" >> "$REPO_FILE"
+    echo "baseurl=https://$REPO_SERVERD/newfusion" >> "$REPO_FILE"
+    echo "enabled=1" >> "$REPO_FILE"
+    echo "gpgcheck=0" >> "$REPO_FILE"
+    echo "sslverify=0" >> "$REPO_FILE"
+    yum clean all
+    yum makecache
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TEMP=`getopt -o :lv --long version:: -n 'opt' -- "$@"`
 
 eval set -- "$TEMP"
@@ -52,3 +73,4 @@ done
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 check_file_permissions
+detect_newfusion_repo
