@@ -10,8 +10,8 @@
 #  | (_| | (_) | (__| || (_) | |     / /| |_| | | |_| |
 #   \__,_|\___/ \___|\__\___/|_|    /___|\__,_|_|\__,_|
 #
-# doctorzulu is a self-healing ddiagnostic utility that will restore a Linux
-# system from catastrophic failure.
+# doctorzulu is a self-healing ddiagnostic utility that will eventually restore
+# a Linux system from catastrophic failure.
 #
 # ..5...10...15...20...25...30...35...40...45...50...55...60...65...70...75...80
 
@@ -51,12 +51,12 @@ detect_newfusion_repo()
       fi
     cp "$REPO_FILE" "$BACKUP_DIR/$REPO_FILE.$(date "+%Y.%m.%d-%H%M%S")"
     echo >> "$REPO_FILE"
-    echo "[newfusion]" >> "$REPO_FILE"
-    echo "name=New Fusion" >> "$REPO_FILE"
+    echo "[newfusion]"                             >> "$REPO_FILE"
+    echo "name=New Fusion"                         >> "$REPO_FILE"
     echo "baseurl=https://$REPO_SERVERD/newfusion" >> "$REPO_FILE"
-    echo "enabled=1" >> "$REPO_FILE"
-    echo "gpgcheck=0" >> "$REPO_FILE"
-    echo "sslverify=0" >> "$REPO_FILE"
+    echo "enabled=1"                               >> "$REPO_FILE"
+    echo "gpgcheck=0"                              >> "$REPO_FILE"
+    echo "sslverify=0"                             >> "$REPO_FILE"
     yum clean all
     yum makecache
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
