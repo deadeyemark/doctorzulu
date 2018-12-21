@@ -49,8 +49,11 @@ detect_newfusion_repo()
       if [ ! -d "$BACKUP_DIR" ];then
         mkdir "$BACKUP_DIR"
       fi
-    cp "$REPO_FILE" "$BACKUP_DIR/$REPO_FILE.$(date "+%Y.%m.%d-%H%M%S")"
-    echo >> "$REPO_FILE"
+    DTG=$(date "+%Y.%m.%d-%H%M%S")
+    cp "$REPO_FILE" "$BACKUP_DIR/$(basename "$REPO_FILE").$DTG"
+    chmod 644 "$BACKUP_DIR/$(basename "$REPO_FILE").$DTG"
+    chown root:root "$BACKUP_DIR/$(basename "$REPO_FILE").$DTG"
+    echo                                           >> "$REPO_FILE"
     echo "[newfusion]"                             >> "$REPO_FILE"
     echo "name=New Fusion"                         >> "$REPO_FILE"
     echo "baseurl=https://$REPO_SERVERD/newfusion" >> "$REPO_FILE"
